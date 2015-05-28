@@ -1,64 +1,76 @@
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class Bank {
-    
-    void updateBalances(List accounts){
-   	 for (Object object : accounts) {
-   		 double xtra = calculateInterest((BankAccount) object);
-   		 BankAccount acc = (BankAccount) object;
-   		 acc.money = acc.money + xtra;
-   	 }
-   	 
-    }
-    
-    double calculateInterest(BankAccount account) {
+	public static final double INTEREST_RATE = 2.54 / 100;
 
-   	 Date dateOpened = account.date;
-   	 double amount = account.getBalance();
-   	 
-   	 double perc = 2.54/100;
-   	 
-   	 
-   	 Calendar a = Calendar.getInstance(Locale.US);
-    	a.setTime(new Date());
-    	Calendar b = Calendar.getInstance(Locale.US);
-    	b.setTime(dateOpened);
-    	int diff = b.get(Calendar.YEAR) - a.get(Calendar.YEAR);
-    	if (a.get(Calendar.MONTH) > b.get(Calendar.MONTH) ||
-        	(a.get(Calendar.MONTH) == b.get(Calendar.MONTH) && a.get(Calendar.DATE) > b.get(Calendar.DATE))) {
-        	diff--;
-    	}
-   	 
-   	if(diff<0) diff=-diff;
-       
-     //return  2.54 * amount;
-   	 return diff * perc * amount;
-    }
+	public void updateBalances(ArrayList<BankAccount> accounts) {
+		for (BankAccount account : accounts) {
+			account.setMoney(account.getMoney() + calculateInterest(account));
+		}
 
+	}
+	
+	public double calculateInterest(BankAccount account) {
+
+		return findTimeBetweenDatesAccessed(account) * INTEREST_RATE
+				* account.getBalance();
+	}
+
+	public double findTimeBetweenDatesAccessed(BankAccount account) {
+		Date dateOpened = account.getDate();
+
+		Calendar currentTime = Calendar.getInstance(Locale.US);
+		currentTime.setTime(new Date());
+		Calendar timeBankAccountOpened = Calendar.getInstance(Locale.US);
+		timeBankAccountOpened.setTime(dateOpened);
+		int differenceInTimeAccountAccessed = timeBankAccountOpened
+				.get(Calendar.YEAR) - currentTime.get(Calendar.YEAR);
+		if (currentTime.get(Calendar.MONTH) > timeBankAccountOpened
+				.get(Calendar.MONTH)
+				|| (currentTime.get(Calendar.MONTH) == timeBankAccountOpened
+						.get(Calendar.MONTH) && currentTime.get(Calendar.DATE) > timeBankAccountOpened
+						.get(Calendar.DATE))) {
+			differenceInTimeAccountAccessed--;
+		}
+		if (differenceInTimeAccountAccessed < 0)
+			differenceInTimeAccountAccessed = -differenceInTimeAccountAccessed;
+		return differenceInTimeAccountAccessed;
+	}
 
 }
-
-
 
 class BankAccount {
 
-    Date date;
-    double money;
+	private Date date;
+	private double money;
 
-    BankAccount(Date date, double money) {
-   	 this.date = date;
-   	 this.money = money;
-    }
-    
+	public BankAccount(Date date, double money) {
+		this.setDate(date);
+		this.setMoney(money);
+	}
 
-    public double getBalance() {
-   	 // TODO Auto-generated method stub
-   	 return money;
-    }
+	public double getBalance() {
+		return getMoney();
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public double getMoney() {
+		return money;
+	}
+
+	public void setMoney(double money) {
+		this.money = money;
+	}
 
 }
-
-

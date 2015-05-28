@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BestRestaurantVoteCounter {
+
 	public static void main(String[] args) throws IOException {
 		new BestRestaurantVoteCounter().getGoing();
 	}
 
-	private void getGoing() throws IOException {
+	void getGoing() throws IOException {
+		scanVotes();
+	}
+
+	public String scanVotes() throws IOException {
 		URL fileWithVotes = getClass().getResource("sample-votes.txt");
 
 		ArrayList<String> votes = new ArrayList();
@@ -19,6 +24,9 @@ public class BestRestaurantVoteCounter {
 		}
 		scanner.close();
 
+		for (String string : votes) {
+			System.out.println(string);
+		}
 		int votesForSangDeuan = 0, votesForOceanaCoastalKitchen = 0, votesForWerewolf = 0, votesForHomeAndAway = 0, votesForCLevel = 0;
 		for (String vote : votes) {
 			if (matchesSangDeuan(vote))
@@ -35,7 +43,7 @@ public class BestRestaurantVoteCounter {
 
 		String winningRestaurant = calculateWinner(votesForSangDeuan, votesForOceanaCoastalKitchen, votesForWerewolf, votesForHomeAndAway, votesForCLevel);
 		System.out.println("Reader's favorite restaurant is: "  + winningRestaurant);
-		//TODO: Tweet the result.
+		return winningRestaurant;
 	}
 
 	private String calculateWinner(int votesForSangDeuan, int votesForOceanaCoastalKitchen, int votesForWerewolf, int votesForHomeAndAway, int votesForCLevel) {
@@ -49,6 +57,11 @@ public class BestRestaurantVoteCounter {
 			mostVotes = votesForOceanaCoastalKitchen;
 			winningRestaurant = "Oceana Coastal Kitchen";
 		}
+		
+		if (votesForCLevel > mostVotes) {
+			mostVotes = votesForCLevel;
+			winningRestaurant = "C Level";
+		}
 		if (votesForWerewolf > mostVotes) {
 			mostVotes = votesForWerewolf;
 			winningRestaurant = "Werewolf";
@@ -57,10 +70,11 @@ public class BestRestaurantVoteCounter {
 			mostVotes = votesForHomeAndAway;
 			winningRestaurant = "Home & Away";
 		}
-		if (votesForCLevel > mostVotes) {
-			mostVotes = votesForCLevel;
-			winningRestaurant = "C Level";
-		}
+
+		System.out.println(votesForWerewolf);
+		System.out.println("c level" + votesForCLevel);
+
+
 		return winningRestaurant;
 	}
 
@@ -79,7 +93,7 @@ public class BestRestaurantVoteCounter {
 	}
 
 	boolean matchesWerewolf(String possibleMatch) {
-		if (possibleMatch.equalsIgnoreCase("Wherewolf") || possibleMatch.equalsIgnoreCase("Werewolf"))
+		if (possibleMatch.equalsIgnoreCase("Wherewolf") || possibleMatch.equalsIgnoreCase("Werewolf") || possibleMatch.equalsIgnoreCase("werewolf") )
 			return true;
 		else
 			return false;
@@ -93,7 +107,7 @@ public class BestRestaurantVoteCounter {
 	}
 
 	boolean matchesCLevel(String possibleMatch) {
-		if (possibleMatch.equalsIgnoreCase("C Level") || possibleMatch.equalsIgnoreCase("c-level") || possibleMatch.equalsIgnoreCase("c level lounge"))
+		if (possibleMatch.equals("C Level  ") || possibleMatch.equals("C Level") || possibleMatch.equals("c-level") || possibleMatch.equals("c level ") || possibleMatch.equals("C level lounge") || possibleMatch.equals("C-Level")) 
 			return true;
 		else
 			return false;
